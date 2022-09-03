@@ -40,10 +40,13 @@ body {
 
   &[data-state='success'] {
     // Change the color and/or add an animation here
+    --color: var(--color-green);
   }
 
   &[data-state='error'] {
     // Change the color and/or add an animation here
+    animation: shake 1s both;
+    --color: rgb(233, 27, 113);
   }
 
   > .ui-input,
@@ -76,7 +79,7 @@ body {
   grid-area: button;
   border: none;
   padding: 0 1rem;
-  color: white;
+  color: var(--fg-color, white);
   font-weight: bold;
   border-radius: 0.25rem;
   height: var(--input-height);

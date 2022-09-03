@@ -10,17 +10,63 @@
   <body>
     <form class="ui-form" data-state="subscribe">
       <input class="ui-input" type="email" placeholder="your@email.com" />
-      <button class="ui-button" type="button" onclick="setState('subscribing')">
-        <span>Subscribe</span>
-        <span>Subscribing</span>
-        <span>Success!</span>
-        <span>Error</span>
+      <button class="ui-button" type="button">
+        <span data-show="subscribe">Subscribe</span>
+        <span data-show="subscribing">Subscribing</span>
+        <span data-show="success">Success!</span>
+        <span data-show="error">Error</span>
       </button>
     </form>
   </body>
   <script>
-    const form = document.querySelector('.ui-form');
+    const form = document.querySelector(".ui-form");
+    const randomState = () => {
+      const nextState = Math.random() >= 0.5 ? "success" : "error";
+      setTimeout(() => setState(nextState), 2000);
+    };
 
-    // ...
+    const machine = {
+      states: {
+        subscribe: {
+          CLICK: { next: "subscribing" },
+        },
+        subscribing: {
+          ENTER: randomState,
+        },
+        error: {
+          CLICK: { next: "subscribing" },
+        },
+        success: {
+          CLICK: { next: "subscribing" },
+        },
+      },
+    };
+
+    function clickHandler() {
+      const state = form.dataset.state;
+      const onClick = machine.states[state].CLICK;
+      if (onClick) {
+        const newState = onClick.next;
+        setState(newState);
+      }
+    }
+
+    function setState(state) {
+      const onEnter = machine.states[state].ENTER;
+      if (onEnter) onEnter();
+      form.dataset.state = state;
+
+      document
+        .querySelectorAll(`[data-active]`)
+        .forEach((activeEl) => delete activeEl.dataset.active);
+      document.querySelectorAll(`[data-show="${state}"]`).forEach((el) => {
+        el.dataset.active = true;
+      });
+    }
+
+    const button = form.querySelector(".ui-button");
+    button.addEventListener("click", clickHandler);
+
+    setState("subscribe");
   </script>
 </html>

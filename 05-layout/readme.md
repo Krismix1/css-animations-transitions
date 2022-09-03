@@ -1,6 +1,6 @@
 # Lesson 5: Layout animations
 
-- FLIP technique
+- [FLIP technique](https://aerotwist.com/blog/flip-your-animations/)
   1. First
   2. Last
   3. Invert

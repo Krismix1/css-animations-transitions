@@ -23,14 +23,48 @@
     </div>
   </body>
   <script>
-    const figureEl = document.querySelector('.ui-figure');
-    const captionEl = document.querySelector('.ui-caption');
-    const appEl = document.querySelector('#app');
+    const figureEl = document.querySelector(".ui-figure");
+    const captionEl = document.querySelector(".ui-caption");
+    const appEl = document.querySelector("#app");
 
-    appEl.addEventListener('click', () => {
-      app.dataset.state =
-        app.dataset.state === 'collapsed' ? 'expanded' : 'collapsed';
+    appEl.addEventListener("click", () => {
+      flip(
+        () => {
+          app.dataset.state =
+            app.dataset.state === "collapsed" ? "expanded" : "collapsed";
+        },
+        figureEl,
+        captionEl
+      );
     });
+
+    function flip(fn, ...elements) {
+      const firstRects = elements.map((el) => el.getBoundingClientRect());
+      fn();
+
+      requestAnimationFrame(() => {
+        const secondRects = elements.map((el) => el.getBoundingClientRect());
+
+        secondRects.forEach((secondRect, index) => {
+          const firstRect = firstRects[index];
+          const dx = firstRect.left - secondRect.left;
+          const dy = firstRect.top - secondRect.top;
+          const dw = firstRect.width / secondRect.width;
+          const dh = firstRect.height / secondRect.height;
+
+          const element = elements[index];
+          element.style.setProperty("--dx", dx);
+          element.style.setProperty("--dy", dy);
+          element.style.setProperty("--dw", dw);
+          element.style.setProperty("--dh", dh);
+          element.dataset.step = "invert";
+
+          requestAnimationFrame(() => {
+            element.dataset.step = "play";
+          });
+        });
+      });
+    }
     // ...
   </script>
 </html>
